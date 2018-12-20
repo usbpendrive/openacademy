@@ -84,6 +84,8 @@
                             <field name="duration" />
                             <field name="seats" />
                         </group>
+                        <label for="attendee_ids" />
+                        <field name="attendee_ids" />
                     </group>
                 </sheet>
             </form>
