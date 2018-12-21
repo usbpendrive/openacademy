@@ -46,7 +46,7 @@
             </form>
         </field>
     </record>
-    <record model="ir.action.act_window" id="open_board_session">
+    <record model="ir.actions.act_window" id="open_board_session">
         <field name="name">Session Dashboard</field>
         <field name="res_model">board.board</field>
         <field name="view_type">form</field>

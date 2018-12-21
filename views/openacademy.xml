@@ -192,7 +192,7 @@
 
     <record model="ir.actions.act_window" id="session_list_action">
         <field name="name">Sessions</field>
-        <field name="res_model">openacademy.sessions</field>
+        <field name="res_model">openacademy.session</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,calendar,gantt,graph,kanban</field>
     </record>
