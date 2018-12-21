@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 from odoo import models, fields, api, exceptions
 
 
@@ -54,9 +55,11 @@ class Session(models.Model):
                                             ('category_id.name', 'ilike', "Teacher")])
     course_id = fields.Many2one('openacademy.course', ondelete='cascade',
                                 string="Course", required=True)
-    attendee_ids = fields.Many2many('res.partner', string='Attendees')
+    attendee_ids = fields.Many2many('res.partner', string="Attendees")
 
-    taken_seats = fields.Float(string='Taken seats', compute='_taken_seats')
+    taken_seats = fields.Float(string="Taken seats", compute='_taken_seats')
+    end_date = fields.Date(string="End Date", store=True,
+                           compute='_get_end_date', inverse='_set_end_date')
 
     @api.depends('seats', 'attendee_ids')
     def _taken_seats(self):
@@ -88,3 +91,23 @@ class Session(models.Model):
         for r in self:
             if r.instructor_id and r.instructor_id in r.attendee_ids:
                 raise exceptions.ValidationError("A session's instructor can't be an attendee")
+
+    @api.depends('start_date', 'duration')
+    def _get_end_date(self):
+        for r in self:
+            if not (r.start_date and r.duration):
+                r.end_date = r.start_date
+                continue
+
+            start = fields.Datetime.from_string(r.start_date)
+            duration = timedelta(days=r.duration, seconds=-1)
+            r.end_date = start + duration
+
+    def _set_end_date(self):
+        for r in self:
+            if not (r.start_date and r.end_date):
+                continue
+
+            start_date = fields.Datetime.from_string(r.start_date)
+            end_date = fields.Datetime.from_string(r.end_date)
+            r.duration = (end_date - start_date).days + 1
